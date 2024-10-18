@@ -1,6 +1,6 @@
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from '@hello-pangea/dnd';
-import WidgetCard from './components/dashboard/ui/Widget';
 import { useState } from 'react';
+import WidgetMixer from './components/dashboard/ui/WidgetMixer';
 
 // Type for items
 interface Item {
@@ -11,30 +11,30 @@ interface Item {
 const items = [
   {
     id: "item-0",
-    content: "item 0"
+    content: "KPI"
   },
   {
     id: "item-1",
-    content: "item 1"
+    content: "KPI"
   },
   {
     id: "item-2",
-    content: "item 2"
+    content: "KPI"
   }
 ]
  
 const itemsTwo = [
   {
     id: "item-3",
-    content: "item 0"
+    content: "KPI"
   },
   {
     id: "item-4",
-    content: "item 1"
+    content: "PIE"
   },
   {
     id: "item-5",
-    content: "item 2"
+    content: "KPI"
   }
 ]
 
@@ -56,20 +56,6 @@ function move(
   const [removed] = sourceClone.splice(droppableSource.index, 1);
 
   destClone.splice(droppableDestination.index, 0, removed);
-
-  // Check if the destination will have 4 items
-  if (destClone.length = 4) {
-    // If the moved item isn't the last index, move the last item back to the source
-    if (droppableDestination.index !== destClone.length - 1) {
-      const [lastItem] = destClone.splice(destClone.length - 1, 1);
-      sourceClone.push(lastItem);
-    }
-    // Else if the moved item is the last index, move the second-to-last item back to the source
-    else {
-      const [secondToLastItem] = destClone.splice(destClone.length - 2, 1);
-      sourceClone.push(secondToLastItem);
-    }
-  }
 
   const result: Record<string, Item[]> = {};
   result[droppableSource.droppableId] = sourceClone;
@@ -131,7 +117,7 @@ const App: React.FC = () => {
                     {...provided.dragHandleProps}
                     className="w-fit"
                   >
-                    <WidgetCard />
+                    <WidgetMixer type={item.content} />
                   </div>
                 )}
               </Draggable>
@@ -157,7 +143,7 @@ const App: React.FC = () => {
                     {...provided.dragHandleProps}
                     className="w-fit"
                   >
-                    <WidgetCard />
+                    <WidgetMixer type={item.content} />
                   </div>
                 )}
               </Draggable>
