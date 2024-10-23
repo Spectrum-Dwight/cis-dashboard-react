@@ -5,12 +5,20 @@ import { CombinedItems, updateItemContent } from './lib/initialpositions';
 import React from 'react';
 import { Button } from './components/ui/button';
 import { toast } from "sonner"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 
 
 
 function App() {
   const { storedValue, setStoredValue, onDragEnd } = useDragAndDrop();
+  const [selectedWidget, setSelectedWidget] = React.useState<string>('');
   let enableAddWidgetButton = false;
 
   const findEmptyContentIndices = React.useCallback((storedValue: CombinedItems): { items: number[], itemsTwo: number[] } => {
@@ -37,7 +45,13 @@ function App() {
 
   const emptyIndices = findEmptyContentIndices(storedValue);
 
-  const addWidget = React.useCallback((widgetType: string): void => {
+  if (emptyIndices.items.length > 0 || emptyIndices.itemsTwo.length > 0) {
+    enableAddWidgetButton = true;
+  } else {
+    enableAddWidgetButton = false;
+  }
+
+  function addWidget(widgetType: string): void {
     if (emptyIndices.items.length > 0) {
       const nextValue = updateItemContent(emptyIndices.items[0], widgetType, storedValue.items);
       setStoredValue(prevValue => ({
@@ -51,7 +65,7 @@ function App() {
         itemsTwo: nextValue
       }));
     }
-  }, [storedValue, findEmptyContentIndices]);
+  };
 
 
   const handleUpdateRowOne = React.useCallback((index: number, newValue: string): void => {
@@ -71,22 +85,29 @@ function App() {
   }, [storedValue.itemsTwo]);
 
   React.useEffect(() => {
-    if (emptyIndices.items.length > 0 || emptyIndices.itemsTwo.length > 0) {
-      enableAddWidgetButton = true;
-    } else {
-      enableAddWidgetButton = false;
-    }
-    console.log(emptyIndices)
-  }, [storedValue]);
+    console.log(selectedWidget)
+  }, [selectedWidget]);
 
   return (
     <div className='flex flex-col'>
-      <div>
+      <div className='flex flex-row gap-4 p-2'>
+        <Select value={selectedWidget} onValueChange={(value) => setSelectedWidget(value)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Widget" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="KPI">KPI Widget</SelectItem>
+            <SelectItem value="PIE">Pie Chart</SelectItem>
+            <SelectItem value="BAR">Bar Chart</SelectItem>
+          </SelectContent>
+        </Select>
         <Button onClick={() => {
           if (!enableAddWidgetButton) {
-            return
+            toast("No more space for widgets.");
+            return;
           }
-          addWidget('KPI');
+
+          addWidget(selectedWidget);
           toast("Event has been created.")
         }}>Add Text Widget</Button>
       </div>
