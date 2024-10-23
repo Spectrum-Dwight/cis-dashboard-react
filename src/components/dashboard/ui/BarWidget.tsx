@@ -13,17 +13,17 @@ import {
 import { SquareX } from "lucide-react"
 import { useState } from "react"
 import "chart.js/auto"
-import { Pie } from "react-chartjs-2"
+import { Bar } from "react-chartjs-2"
 
 // create props for KPIWidget it should take in an array of account names and a array of account data to filter
-interface PieWidgetProps {
+interface BarWidgetProps {
     accountNames?: string[]
     accountData?: any[]
     currentIndex: number;
     removeWidget: (index: number, newValue: string) => void;
 }
 
-function PieWidget({ currentIndex, removeWidget }: PieWidgetProps) {
+function BarWidget({ currentIndex, removeWidget }: BarWidgetProps) {
     const [chartData, setChartData] = useState({
         labels: ['Red', 'Orange', 'Blue'],
         datasets: [
@@ -64,7 +64,7 @@ function PieWidget({ currentIndex, removeWidget }: PieWidgetProps) {
             </div>
             <CardContent>
                 <div>
-                    <Pie
+                    <Bar
                         data={chartData}
                         options={{
                             responsive: true,
@@ -89,4 +89,4 @@ function PieWidget({ currentIndex, removeWidget }: PieWidgetProps) {
         </Card>
     )
 }
-export default PieWidget
+export default BarWidget

@@ -14,13 +14,15 @@ import { SquareX } from "lucide-react"
 
 // create props for KPIWidget it should take in an array of account names and a array of account data to filter
 interface KPIWidgetProps {
-    accountNames: string[]
-    accountData: any[]
-} 
+    accountNames?: string[]
+    accountData?: any[]
+    currentIndex: number;
+    removeWidget: (index: number, newValue: string) => void;
+}
 
-function KPIWidget() {
+function KPIWidget({ currentIndex, removeWidget }: KPIWidgetProps) {
     return (
-        <Card className="w-[400px] h-fit shadow-md hover:shadow-lg hover:cursor-grab active:cursor-grabbing transition-shadow duration-300">
+        <Card className="min-w-[600px] min-h-[400px] h-fit shadow-md hover:shadow-lg hover:cursor-grab active:cursor-grabbing transition-shadow duration-300">
             <div className="flex flex-row items-center justify-between py-2 px-6">
                 <Select>
                     <SelectTrigger className="w-[180px]">
@@ -36,7 +38,10 @@ function KPIWidget() {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <SquareX className="w-4 h-4 hover:cursor-pointer" onClick={() => console.log("close me")} />
+                <SquareX className="w-4 h-4 hover:cursor-pointer" onClick={() => {
+                    removeWidget(currentIndex, '')
+                    console.log("close me")
+                }} />
             </div>
             <CardContent>
                 <div className="flex flex-col gap-1 max-w-md">
