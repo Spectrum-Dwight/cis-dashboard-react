@@ -10,31 +10,61 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { SquareX } from "lucide-react"
+import { AccountKPIData } from "@/hooks/useDashBoardData";
+import { Loader2, SquareX } from "lucide-react"
+import React from "react";
 
-// create props for KPIWidget it should take in an array of account names and a array of account data to filter
 interface KPIWidgetProps {
-    accountNames?: string[]
-    accountData?: any[]
+    kpiData: AccountKPIData[] | undefined;
     currentIndex: number;
+    loading: boolean;
+    accountDropDownOptions: JSX.Element[];
     removeWidget: (index: number, newValue: string) => void;
 }
 
-function KPIWidget({ currentIndex, removeWidget }: KPIWidgetProps) {
+function KPIWidget({ loading, currentIndex, removeWidget, accountDropDownOptions, kpiData }: KPIWidgetProps) {
+    const [selectedAccountId, setSelectedAccountId] = React.useState<number>(0);
+    let filteredKPIData: any[] = [];
+    let totalPriorYearClaimCount: number = 0;
+    let totalCurrentYearClaimCount: number = 0;
+    let totalClaimsClosedThisQuarter: number = 0;
+    let totalClaimsInLitigation: number = 0;
+
+    if (loading) {
+        return (
+            <div className="min-w-[500px] min-h-[200px] flex items-center justify-center"><Loader2 className="animate-spin" /></div>
+        )
+    }
+
+    if (kpiData) {
+        console.log('kpiData', kpiData);
+        if (selectedAccountId === 0) {
+            filteredKPIData = kpiData;
+        } else {
+            filteredKPIData = kpiData.filter(account => account.AccountID === selectedAccountId);
+        }
+
+    }
+
+    filteredKPIData.forEach(account => {
+        totalPriorYearClaimCount += account.PriorYearClaimCount;
+        totalCurrentYearClaimCount += account.CurrentYearClaimCount;
+        totalClaimsClosedThisQuarter += account.ClaimsClosedThisQuarter;
+        totalClaimsInLitigation += account.ClaimsInLitigation;
+    });
+
+
     return (
-        <Card className="min-w-[600px] min-h-[400px] h-fit shadow-md hover:shadow-lg hover:cursor-grab active:cursor-grabbing transition-shadow duration-300">
+        <Card className="w-[500px] h-[200px] shadow-md rounded hover:shadow-lg hover:cursor-grab active:cursor-grabbing transition-shadow duration-300">
             <div className="flex flex-row items-center justify-between py-2 px-6">
-                <Select>
+                <Select value={selectedAccountId.toString()} onValueChange={(value) => setSelectedAccountId(Number(value))} disabled={loading}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a fruit" />
+                        <SelectValue placeholder="Select an account" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem value="apple">Apple</SelectItem>
-                            <SelectItem value="banana">Banana</SelectItem>
-                            <SelectItem value="blueberry">Blueberry</SelectItem>
-                            <SelectItem value="grapes">Grapes</SelectItem>
-                            <SelectItem value="pineapple">Pineapple</SelectItem>
+                            <SelectItem value="0">All Accounts</SelectItem>
+                            {accountDropDownOptions}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -44,25 +74,24 @@ function KPIWidget({ currentIndex, removeWidget }: KPIWidgetProps) {
                 }} />
             </div>
             <CardContent>
-                <div className="flex flex-col gap-1 max-w-md">
+                <div className="flex flex-col mx-auto gap-1 w-4/5">
                     <div className="flex justify-between items-center" id="PriorYearCard">
-                        <div className="bg-blue-100 rounded-lg p-2 font-bold">Claim Count 2023 YTD:</div>
-                        <div id="PriorYearClaimCount" className="text-green-700 text-lg font-bold rounded-lg p-2">-</div>
+                        <div className="bg-blue-100 rounded-lg p-2 font-bold text-3xl w-fit">Claim Count 2023 YTD:</div>
+                        <div id="PriorYearClaimCount" className="text-green-700 text-3xl font-bold rounded-lg p-2">{totalPriorYearClaimCount}</div>
                     </div>
                     <div className="flex justify-between items-center" id="CurrentYearCard">
-                        <div className="bg-blue-100 rounded-lg p-2 font-bold">Claim Count 2024 YTD:</div>
-                        <div id="CurrentYearClaimCount" className="text-green-700 text-lg font-bold rounded-lg p-2">-</div>
+                        <div className="bg-blue-100 rounded-lg p-2 font-bold text-3xl  w-fit">Claim Count 2024 YTD:</div>
+                        <div id="CurrentYearClaimCount" className="text-green-700 text-3xl font-bold rounded-lg p-2">{totalCurrentYearClaimCount}</div>
                     </div>
                     <div className="flex justify-between items-center" id="ClosedThisQuarterCard">
-                        <div className="bg-blue-100 rounded-lg p-2 font-bold">Claims Closed this Quarter:</div>
-                        <div id="ClaimsClosedThisQuarter" className="text-green-700 text-lg font-bold rounded-lg p-2">-</div>
+                        <div className="bg-blue-100 rounded-lg p-2 font-bold text-3xl  w-fit">Claims Closed this Month:</div>
+                        <div id="ClaimsClosedThisQuarter" className="text-green-700 text-3xl font-bold rounded-lg p-2">{totalClaimsClosedThisQuarter}</div>
                     </div>
                     <div className="flex justify-between items-center" id="InLitigationCard">
-                        <div className="bg-blue-100 rounded-lg p-2 font-bold">Claims in Litigation Open & Reopened:</div>
-                        <div id="ClaimsInLitigation" className="text-green-700 text-lg font-bold rounded-lg p-2">-</div>
+                        <div className="bg-blue-100 rounded-lg p-2 font-bold text-3xl  w-fit">New Claims in Last Month:</div>
+                        <div id="ClaimsInLitigation" className="text-green-700 text-3xl font-bold rounded-lg p-2">{totalClaimsInLitigation}</div>
                     </div>
                 </div>
-
             </CardContent>
         </Card>
     )

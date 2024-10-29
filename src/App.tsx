@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import useDashboardData, { createSelectOptions } from './hooks/useDashBoardData';
 
 
 
@@ -20,6 +21,17 @@ function App() {
   const { storedValue, setStoredValue, onDragEnd } = useDragAndDrop();
   const [selectedWidget, setSelectedWidget] = React.useState<string>('');
   let enableAddWidgetButton = false;
+  let accountDropdownOptions: JSX.Element[] = [];
+
+  const { accountsKPIData,
+    barChartData,
+    pieChartData,
+    accountError,
+    barChartError,
+    pieChartError,
+    accountsKPILoading,
+    barChartLoading,
+    pieChartLoading, } = useDashboardData();
 
   const findEmptyContentIndices = React.useCallback((storedValue: CombinedItems): { items: number[], itemsTwo: number[] } => {
     const emptyIndicesItems: number[] = [];
@@ -51,7 +63,7 @@ function App() {
     enableAddWidgetButton = false;
   }
 
-  function addWidget(widgetType: string): void {
+  const addWidget = React.useCallback((widgetType: string): void => {
     if (emptyIndices.items.length > 0) {
       const nextValue = updateItemContent(emptyIndices.items[0], widgetType, storedValue.items);
       setStoredValue(prevValue => ({
@@ -65,7 +77,7 @@ function App() {
         itemsTwo: nextValue
       }));
     }
-  };
+  }, [emptyIndices.items, emptyIndices.itemsTwo, storedValue.items, storedValue.itemsTwo]);
 
 
   const handleUpdateRowOne = React.useCallback((index: number, newValue: string): void => {
@@ -84,13 +96,24 @@ function App() {
     }));
   }, [storedValue.itemsTwo]);
 
-  React.useEffect(() => {
-    console.log(selectedWidget)
-  }, [selectedWidget]);
+  if (accountError || barChartError || pieChartError) {
+    return <div>Error loading data</div>;
+  }
+
+  if (!accountsKPILoading && accountsKPIData) {
+    accountDropdownOptions = createSelectOptions(accountsKPIData);
+  }
+
+  const dataLoading = [accountsKPILoading, pieChartLoading, barChartLoading];
+  const dashboardData = {
+    accountsKPIData,
+    barChartData,
+    pieChartData
+  };
 
   return (
-    <div className='flex flex-col'>
-      <div className='flex flex-row gap-4 p-2'>
+    <div className='flex flex-col p-2'>
+      <div className='flex flex-row gap-4 px-2'>
         <Select value={selectedWidget} onValueChange={(value) => setSelectedWidget(value)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select Widget" />
@@ -108,8 +131,8 @@ function App() {
           }
 
           addWidget(selectedWidget);
-          toast("Event has been created.")
-        }}>Add Text Widget</Button>
+          toast(`${selectedWidget} added.`)
+        }} type='button'>Add Widget</Button>
       </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable-row-1" direction="horizontal">
@@ -117,7 +140,7 @@ function App() {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="flex flex-row mb-4"
+              className="flex flex-row mb-1"
             >
               {storedValue.items.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
@@ -126,9 +149,9 @@ function App() {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="w-fit"
+                      className="w-fit p-2"
                     >
-                      <WidgetMixer type={item.content} index={index} updateRow={handleUpdateRowOne} />
+                      <WidgetMixer type={item.content} index={index} updateRow={handleUpdateRowOne} dataLoading={dataLoading} accountDropDownOptions={accountDropdownOptions} dashboardData={dashboardData} />
                     </div>
                   )}
                 </Draggable>
@@ -151,9 +174,9 @@ function App() {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="w-fit"
+                      className="w-fit p-2"
                     >
-                      <WidgetMixer type={item.content} index={index} updateRow={handleUpdateRowTwo} />
+                      <WidgetMixer type={item.content} index={index} updateRow={handleUpdateRowTwo} dataLoading={dataLoading} accountDropDownOptions={accountDropdownOptions} dashboardData={dashboardData} />
                     </div>
                   )}
                 </Draggable>

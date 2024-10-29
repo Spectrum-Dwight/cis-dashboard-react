@@ -3,10 +3,13 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { Toaster } from "@/components/ui/sonner"
+import { QueryClient, QueryClientProvider } from 'react-query'
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById('cis-dashboard')!).render(
   <StrictMode>
-    <App />
-    <Toaster closeButton />
+    <QueryClientProvider client={new QueryClient}>
+      <App />
+      <Toaster closeButton />
+    </QueryClientProvider>
   </StrictMode>,
 )

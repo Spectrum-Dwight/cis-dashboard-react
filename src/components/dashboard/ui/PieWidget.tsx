@@ -10,50 +10,57 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { SquareX } from "lucide-react"
-import { useState } from "react"
+import { Loader2, SquareX } from "lucide-react"
 import "chart.js/auto"
 import { Pie } from "react-chartjs-2"
+import React from "react"
+import { PieDataArray } from "@/hooks/useDashBoardData"
+import { Chart_Borders, Chart_Colors } from "@/lib/utils"
 
-// create props for KPIWidget it should take in an array of account names and a array of account data to filter
 interface PieWidgetProps {
-    accountNames?: string[]
-    accountData?: any[]
+    pieChartData: any[] | undefined;
     currentIndex: number;
+    loading: boolean;
+    accountDropDownOptions: JSX.Element[];
     removeWidget: (index: number, newValue: string) => void;
 }
 
-function PieWidget({ currentIndex, removeWidget }: PieWidgetProps) {
-    const [chartData, setChartData] = useState({
-        labels: ['Red', 'Orange', 'Blue'],
-        datasets: [
-            {
-                label: 'Popularity of colours',
-                data: [55, 23, 96],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',    // Red
-                    'rgba(54, 162, 235, 0.2)',    // Blue
-                    'rgba(255, 206, 86, 0.2)',    // Yellow
-                ],
-                borderWidth: 1,
-            }
-        ]
-    });
+function PieWidget({ loading, currentIndex, removeWidget, accountDropDownOptions, pieChartData }: PieWidgetProps) {
+    const [selectedAccountId, setSelectedAccountId] = React.useState<number>(0);
+    let filteredPieData: any[] = [];
+
+    if (loading) {
+        return (
+            <div className="min-w-[500px] min-h-[200px] flex items-center justify-center"><Loader2 className="animate-spin" /></div>
+        )
+    }
+
+    if (pieChartData) {
+        console.log('pieChartData', pieChartData);
+        if (selectedAccountId === 0) {
+            filteredPieData = pieChartData;
+        } else {
+            filteredPieData = pieChartData.filter(account => account.AccountID === selectedAccountId);
+        }
+
+    }
+
+    const accumulatedData = accumulateClaimsByType(filteredPieData);
+    const sortedData = sortByTotalIncurred(accumulatedData);
+    const finalResult = groupTopNineAndOthers(sortedData);
+    const filteredGroupedData = createPieChartData(finalResult);
 
     return (
-        <Card className="min-w-[600px] min-h-[400px] h-fit shadow-md hover:shadow-lg hover:cursor-grab active:cursor-grabbing transition-shadow duration-300">
+        <Card className="w-[500px] h-[475px] shadow-md rounded hover:shadow-lg hover:cursor-grab active:cursor-grabbing transition-shadow duration-300">
             <div className="flex flex-row items-center justify-between py-2 px-6">
-                <Select>
+                <Select value={selectedAccountId.toString()} onValueChange={(value) => setSelectedAccountId(Number(value))} disabled={loading}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a fruit" />
+                        <SelectValue placeholder="Select an account" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem value="apple">Apple</SelectItem>
-                            <SelectItem value="banana">Banana</SelectItem>
-                            <SelectItem value="blueberry">Blueberry</SelectItem>
-                            <SelectItem value="grapes">Grapes</SelectItem>
-                            <SelectItem value="pineapple">Pineapple</SelectItem>
+                            <SelectItem value="0">All Accounts</SelectItem>
+                            {accountDropDownOptions}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -62,10 +69,11 @@ function PieWidget({ currentIndex, removeWidget }: PieWidgetProps) {
                     console.log("close me")
                 }} />
             </div>
-            <CardContent>
+            <CardContent className="h-max">
                 <div>
                     <Pie
-                        data={chartData}
+                        className="w-[500px] h-[400px]"
+                        data={filteredGroupedData}
                         options={{
                             responsive: true,
                             maintainAspectRatio: false,
@@ -90,3 +98,77 @@ function PieWidget({ currentIndex, removeWidget }: PieWidgetProps) {
     )
 }
 export default PieWidget
+
+interface AccumulatedClaims {
+    [key: string]: {
+        TypeOfClaim: string;
+        ClaimCount: number;
+        TotalIncurred: number;
+    };
+}
+
+function accumulateClaimsByType(data: PieDataArray) {
+    return data.reduce((acc: AccumulatedClaims, curr) => {
+        if (acc[curr.TypeOfClaim]) {
+            acc[curr.TypeOfClaim].ClaimCount += curr.ClaimCount;
+            acc[curr.TypeOfClaim].TotalIncurred += curr.TotalIncurred;
+        } else {
+            acc[curr.TypeOfClaim] = {
+                TypeOfClaim: curr.TypeOfClaim,
+                ClaimCount: curr.ClaimCount,
+                TotalIncurred: curr.TotalIncurred
+            };
+        }
+        return acc;
+    }, {});
+}
+
+function sortByTotalIncurred(accumulatedData: AccumulatedClaims) {
+    const sortedArray = Object.entries(accumulatedData).sort((a, b) => {
+        return b[1].TotalIncurred - a[1].TotalIncurred;
+    });
+
+    const sortedObject = Object.fromEntries(sortedArray);
+    return sortedObject;
+}
+
+function groupTopNineAndOthers(sortedData: AccumulatedClaims) {
+    const sortedEntries = Object.entries(sortedData);
+    const topNine = sortedEntries.slice(0, 9);
+    const allOtherClaims = sortedEntries.slice(9).reduce((acc, [_, value]) => {
+        acc.ClaimCount += value.ClaimCount;
+        acc.TotalIncurred += value.TotalIncurred;
+        return acc;
+    },
+        { TypeOfClaim: 'All Other', ClaimCount: 0, TotalIncurred: 0 }
+    );
+
+    const result = Object.fromEntries(topNine);
+    result['All Other'] = allOtherClaims;
+
+    return result;
+}
+
+function createPieChartData(accumulatedData: any) {
+    const labels = [];
+    const data = [];
+
+    for (const typeOfClaim in accumulatedData) {
+        if (accumulatedData.hasOwnProperty(typeOfClaim)) {
+            const claimData = accumulatedData[typeOfClaim];
+            labels.push(claimData.TypeOfClaim);       // TypeOfClaim as label
+            data.push(claimData.TotalIncurred);       // Total Incurred as data
+        }
+    }
+
+    return {
+        labels: labels,
+        datasets: [{
+            label: 'Total Incurred',
+            data: data,
+            backgroundColor: Chart_Colors,
+            borderColor: Chart_Borders,
+            borderWidth: 1
+        }]
+    };
+}
