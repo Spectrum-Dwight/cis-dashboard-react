@@ -36,7 +36,6 @@ function BarWidget({ loading, currentIndex, removeWidget, accountDropDownOptions
     }
 
     if (barChartData) {
-        console.log('barChartData', barChartData);
         if (selectedAccountId === 0) {
             filteredBarData = barChartData;
         } else {
@@ -61,7 +60,6 @@ function BarWidget({ loading, currentIndex, removeWidget, accountDropDownOptions
                 </Select>
                 <SquareX className="w-4 h-4 hover:cursor-pointer" onClick={() => {
                     removeWidget(currentIndex, '')
-                    console.log("close me")
                 }} />
             </div>
             <CardContent>

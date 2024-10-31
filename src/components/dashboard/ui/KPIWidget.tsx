@@ -40,13 +40,11 @@ function KPIWidget({ loading, currentIndex, removeWidget, accountDropDownOptions
     }
 
     if (kpiData) {
-        console.log('kpiData', kpiData);
         if (selectedAccountId === 0) {
             filteredKPIData = kpiData;
         } else {
             filteredKPIData = kpiData.filter(account => account.AccountID === selectedAccountId);
         }
-
     }
 
     filteredKPIData.forEach(account => {
@@ -73,7 +71,6 @@ function KPIWidget({ loading, currentIndex, removeWidget, accountDropDownOptions
                 </Select>
                 <SquareX className="w-4 h-4 hover:cursor-pointer" onClick={() => {
                     removeWidget(currentIndex, '')
-                    console.log("close me")
                 }} />
             </div>
             <CardContent>

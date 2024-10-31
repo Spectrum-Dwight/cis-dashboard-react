@@ -36,7 +36,6 @@ function PieWidget({ loading, currentIndex, removeWidget, accountDropDownOptions
     }
 
     if (pieChartData) {
-        console.log('pieChartData', pieChartData);
         if (selectedAccountId === 0) {
             filteredPieData = pieChartData;
         } else {
@@ -66,7 +65,6 @@ function PieWidget({ loading, currentIndex, removeWidget, accountDropDownOptions
                 </Select>
                 <SquareX className="w-4 h-4 hover:cursor-pointer" onClick={() => {
                     removeWidget(currentIndex, '')
-                    console.log("close me")
                 }} />
             </div>
             <CardContent className="h-max">

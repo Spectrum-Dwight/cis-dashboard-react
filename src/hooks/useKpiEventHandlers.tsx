@@ -11,7 +11,6 @@ function useKpiEventHandlers(selectedAccountId: number) {
     useEffect(() => {
         function onKpiClick(kpiType: string) {
             const queryString = constructQueryParams(selectedAccountId, kpiType);
-            console.log(queryString);
             window.location.href = `/maincontainer.aspx${queryString}`;
         }
 
