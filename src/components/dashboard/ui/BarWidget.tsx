@@ -132,10 +132,10 @@ function createBarChartData(totals: any) {
                     totals.TotalIncurredYear4,
                 ],
                 backgroundColor: [
-                    'rgba(224, 84, 84, 0.2)'
+                    "rgba(139, 0, 0, 0.4)",
                 ],
                 borderColor: [
-                    'rgba(224, 84, 84, 1)'
+                    "rgba(139, 0, 0, 1)",
                 ],
                 borderWidth: 1,
                 yAxisID: 'y'
@@ -150,7 +150,7 @@ function createBarChartData(totals: any) {
                     totals.ClaimsYear3,
                     totals.ClaimsYear4
                 ],
-                borderColor: 'rgba(144, 237, 125, 1)',
+                borderColor: "rgba(0, 0, 139, 1)",
                 borderWidth: 2,
                 yAxisID: 'y1',
                 fill: false

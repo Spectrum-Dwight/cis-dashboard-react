@@ -11,6 +11,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { AccountKPIData } from "@/hooks/useDashBoardData";
+import useKpiEventHandlers from "@/hooks/useKpiEventHandlers";
 import { Loader2, SquareX } from "lucide-react"
 import React from "react";
 
@@ -24,6 +25,8 @@ interface KPIWidgetProps {
 
 function KPIWidget({ loading, currentIndex, removeWidget, accountDropDownOptions, kpiData }: KPIWidgetProps) {
     const [selectedAccountId, setSelectedAccountId] = React.useState<number>(0);
+    useKpiEventHandlers(selectedAccountId);
+
     let filteredKPIData: any[] = [];
     let totalPriorYearClaimCount: number = 0;
     let totalCurrentYearClaimCount: number = 0;
@@ -75,19 +78,19 @@ function KPIWidget({ loading, currentIndex, removeWidget, accountDropDownOptions
             </div>
             <CardContent>
                 <div className="flex flex-col mx-auto gap-1 w-4/5">
-                    <div className="flex justify-between items-center" id="PriorYearCard">
+                    <div className="flex justify-between items-center hover:cursor-pointer active:cursor-pointer" id="PriorYearCard">
                         <div className="bg-blue-100 rounded-lg p-2 font-bold text-3xl w-fit">Claim Count 2023 YTD:</div>
                         <div id="PriorYearClaimCount" className="text-green-700 text-3xl font-bold rounded-lg p-2">{totalPriorYearClaimCount}</div>
                     </div>
-                    <div className="flex justify-between items-center" id="CurrentYearCard">
+                    <div className="flex justify-between items-center hover:cursor-pointer active:cursor-pointer" id="CurrentYearCard">
                         <div className="bg-blue-100 rounded-lg p-2 font-bold text-3xl  w-fit">Claim Count 2024 YTD:</div>
                         <div id="CurrentYearClaimCount" className="text-green-700 text-3xl font-bold rounded-lg p-2">{totalCurrentYearClaimCount}</div>
                     </div>
-                    <div className="flex justify-between items-center" id="ClosedThisQuarterCard">
+                    <div className="flex justify-between items-center hover:cursor-pointer active:cursor-pointer" id="ClosedThisQuarterCard">
                         <div className="bg-blue-100 rounded-lg p-2 font-bold text-3xl  w-fit">Claims Closed this Month:</div>
                         <div id="ClaimsClosedThisQuarter" className="text-green-700 text-3xl font-bold rounded-lg p-2">{totalClaimsClosedThisQuarter}</div>
                     </div>
-                    <div className="flex justify-between items-center" id="InLitigationCard">
+                    <div className="flex justify-between items-center hover:cursor-pointer active:cursor-pointer" id="InLitigationCard">
                         <div className="bg-blue-100 rounded-lg p-2 font-bold text-3xl  w-fit">New Claims in Last Month:</div>
                         <div id="ClaimsInLitigation" className="text-green-700 text-3xl font-bold rounded-lg p-2">{totalClaimsInLitigation}</div>
                     </div>
