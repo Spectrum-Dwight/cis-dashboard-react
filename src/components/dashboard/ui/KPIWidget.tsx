@@ -30,7 +30,7 @@ function KPIWidget({
   kpiData,
 }: KPIWidgetProps) {
   const [selectedAccountId, setSelectedAccountId] = React.useState<number>(0);
-  const [selectedAdjusterId, setSelectedAdjusterId] = React.useState<number>(0);
+  const [selectedAdjusterId, setSelectedAdjusterId] = React.useState<string>('0');
   useKpiEventHandlers(selectedAccountId);
 
   let filteredKPIData: any[] = [];
@@ -48,10 +48,11 @@ function KPIWidget({
   }
 
   if (kpiData) {
+    console.log(kpiData);
     filteredKPIData = kpiData.filter(
       (account) =>
         (selectedAccountId === 0 || account.AccountID === selectedAccountId) &&
-        (selectedAdjusterId === 0 || account.AdjusterID === selectedAdjusterId)
+        (selectedAdjusterId === '0' || account.AdjusterUserID === selectedAdjusterId)
     );
   }
 
@@ -80,8 +81,8 @@ function KPIWidget({
           </SelectContent>
         </Select>
         <Select
-          value={selectedAdjusterId.toString()}
-          onValueChange={(value) => setSelectedAdjusterId(Number(value))}
+          value={selectedAdjusterId}
+          onValueChange={(value) => setSelectedAdjusterId(value)}
           disabled={loading}>
           <SelectTrigger className='w-[180px]'>
             <SelectValue placeholder='Select an adjuster' />

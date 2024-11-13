@@ -5,7 +5,7 @@ import { JSX } from 'react/jsx-runtime';
 
 export type AccountKPIData = {
   AccountID: number;
-  AdjusterID: number;
+  AdjusterUserID: string;
   AccountName: string;
   PriorYearClaimCount: number;
   CurrentYearClaimCount: number;
@@ -28,7 +28,7 @@ export type AccountKPIData = {
 
 type PieData = {
   AccountID: number;
-  AdjusterID: number;
+  AdjusterUserID: number;
   AccountName: string;
   TypeOfClaim: string;
   ClaimCount: number;
@@ -37,7 +37,7 @@ type PieData = {
 
 type BarData = {
   AccountID: number;
-  AdjusterID: number;
+  AdjusterUserID: number;
   AccountName: string;
   ClaimsYear0: number;
   TotalIncurredYear0: number;
@@ -54,13 +54,39 @@ type BarData = {
 export type BarDataArray = BarData[];
 export type PieDataArray = PieData[];
 
-export function createSelectOptions(data: AccountKPIData[]): JSX.Element[] {
+export function createAccountSelectOptions(data: AccountKPIData[]): JSX.Element[] {
   const selectOptions: JSX.Element[] = [];
+  const accountIDs = new Set<string>();
 
   data.forEach((account) => {
-    selectOptions.push(
-      <SelectItem value={account.AccountID.toString()}>{account.AccountName}</SelectItem>
-    );
+    const accountID = account.AccountID.toString();
+    if (!accountIDs.has(accountID)) {
+      accountIDs.add(accountID);
+      selectOptions.push(
+        <SelectItem value={account.AccountID.toString()}>
+          {account.AccountName}
+        </SelectItem>
+      );
+    }
+  });
+
+  return selectOptions;
+}
+
+export function createAdjusterSelectOptions(data: AccountKPIData[]): JSX.Element[] {
+  const selectOptions: JSX.Element[] = [];
+  const adjusterIDs = new Set<string>();
+
+  data.forEach((account) => {
+    const adjusterID = account.AdjusterUserID.toString();
+    if (!adjusterIDs.has(adjusterID)) {
+      adjusterIDs.add(adjusterID);
+      selectOptions.push(
+        <SelectItem value={account.AdjusterUserID.toString()}>
+          {account.AdjusterUserID.toString()}
+        </SelectItem>
+      );
+    }
   });
 
   return selectOptions;

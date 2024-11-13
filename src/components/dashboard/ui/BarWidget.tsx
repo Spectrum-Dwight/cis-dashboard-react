@@ -18,7 +18,6 @@ interface BarWidgetProps {
   currentIndex: number;
   loading: boolean;
   accountDropDownOptions: JSX.Element[];
-  adjusterDropDownOptions: JSX.Element[];
   removeWidget: (index: number, newValue: string) => void;
 }
 
@@ -27,11 +26,10 @@ function BarWidget({
   currentIndex,
   removeWidget,
   accountDropDownOptions,
-  adjusterDropDownOptions,
   barChartData,
 }: BarWidgetProps) {
   const [selectedAccountId, setSelectedAccountId] = React.useState<number>(0);
-  const [selectedAdjusterId, setSelectedAdjusterId] = React.useState<number>(0);
+  // const [selectedAdjusterId, setSelectedAdjusterId] = React.useState<string>('');
   let filteredBarData: any[] = [];
 
   if (loading) {
@@ -44,9 +42,7 @@ function BarWidget({
 
   if (barChartData) {
     filteredBarData = barChartData.filter(
-      (account) =>
-        (selectedAccountId === 0 || account.AccountID === selectedAccountId) &&
-        (selectedAdjusterId === 0 || account.AdjusterID === selectedAdjusterId)
+      (account) => selectedAccountId === 0 || account.AccountID === selectedAccountId
     );
   }
 
@@ -67,20 +63,20 @@ function BarWidget({
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Select
+        {/* <Select
           value={selectedAdjusterId.toString()}
-          onValueChange={(value) => setSelectedAdjusterId(Number(value))}
+          onValueChange={(value) => setSelectedAdjusterId(value)}
           disabled={loading}>
           <SelectTrigger className='w-[180px]'>
             <SelectValue placeholder='Select an adjuster' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value='0'>All Adjusters</SelectItem>
+              <SelectItem value=''>All Adjusters</SelectItem>
               {adjusterDropDownOptions}
             </SelectGroup>
           </SelectContent>
-        </Select>
+        </Select> */}
         <SquareX
           className='w-4 h-4 hover:cursor-pointer'
           onClick={() => {
