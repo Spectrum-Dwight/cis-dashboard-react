@@ -9,5 +9,12 @@
   <body>
     <div id="cis-dashboard"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="module">
+      import { mountApp } from '/src/main.tsx'
+      
+      if (document.getElementById('cis-dashboard')) {
+        mountApp(document.getElementById('cis-dashboard'))
+      }
+    </script>
   </body>
 </html>
