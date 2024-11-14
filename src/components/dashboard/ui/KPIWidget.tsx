@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AccountKPIData } from '@/hooks/useDashBoardData';
+import { AccountKPIData, createAdjusterSelectOptions } from '@/hooks/useDashBoardData';
 import useKpiEventHandlers from '@/hooks/useKpiEventHandlers';
 import { Loader2, SquareX } from 'lucide-react';
 import React from 'react';
@@ -17,7 +17,6 @@ interface KPIWidgetProps {
   currentIndex: number;
   loading: boolean;
   accountDropDownOptions: JSX.Element[];
-  adjusterDropDownOptions: JSX.Element[];
   removeWidget: (index: number, newValue: string) => void;
 }
 
@@ -26,7 +25,6 @@ function KPIWidget({
   currentIndex,
   removeWidget,
   accountDropDownOptions,
-  adjusterDropDownOptions,
   kpiData,
 }: KPIWidgetProps) {
   const [selectedAccountId, setSelectedAccountId] = React.useState<number>(0);
@@ -38,6 +36,10 @@ function KPIWidget({
   let totalCurrentYearClaimCount: number = 0;
   let totalClaimsClosedThisQuarter: number = 0;
   let totalClaimsInLitigation: number = 0;
+
+  const adjusterDropdownOptions = React.useMemo(() => {
+    return kpiData ? createAdjusterSelectOptions(kpiData) : [];
+  }, [kpiData]);
 
   if (loading) {
     return (
@@ -90,7 +92,7 @@ function KPIWidget({
           <SelectContent>
             <SelectGroup>
               <SelectItem value='0'>All Adjusters</SelectItem>
-              {adjusterDropDownOptions}
+              {adjusterDropdownOptions}
             </SelectGroup>
           </SelectContent>
         </Select>
