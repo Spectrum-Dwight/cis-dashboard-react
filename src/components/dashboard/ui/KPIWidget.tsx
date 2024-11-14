@@ -50,7 +50,7 @@ function KPIWidget({
   }
 
   if (kpiData) {
-    console.log(kpiData);
+    console.log('kpiData', kpiData);
     filteredKPIData = kpiData.filter(
       (account) =>
         (selectedAccountId === 0 || account.AccountID === selectedAccountId) &&

@@ -41,6 +41,7 @@ function BarWidget({
   }
 
   if (barChartData) {
+    console.log('barChartData', barChartData);
     filteredBarData = barChartData.filter(
       (account) => selectedAccountId === 0 || account.AccountID === selectedAccountId
     );

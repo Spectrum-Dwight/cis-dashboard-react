@@ -22,7 +22,6 @@ function App() {
   const [selectedWidget, setSelectedWidget] = React.useState<string>('');
   let enableAddWidgetButton = false;
   let accountDropdownOptions: JSX.Element[] = [];
-  let adjusterDropdownOptions: JSX.Element[] = [];
 
   const {
     accountsKPIData,
@@ -124,7 +123,6 @@ function App() {
 
   if (!accountsKPILoading && accountsKPIData) {
     accountDropdownOptions = createAccountSelectOptions(accountsKPIData);
-    adjusterDropdownOptions = createAdjusterSelectOptions(accountsKPIData);
   }
 
   const dataLoading = [accountsKPILoading, pieChartLoading, barChartLoading];
@@ -184,7 +182,6 @@ function App() {
                         updateRow={handleUpdateRowOne}
                         dataLoading={dataLoading}
                         accountDropDownOptions={accountDropdownOptions}
-                        adjusterDropDownOptions={adjusterDropdownOptions}
                         dashboardData={dashboardData}
                       />
                     </div>
@@ -215,7 +212,6 @@ function App() {
                         updateRow={handleUpdateRowTwo}
                         dataLoading={dataLoading}
                         accountDropDownOptions={accountDropdownOptions}
-                        adjusterDropDownOptions={adjusterDropdownOptions}
                         dashboardData={dashboardData}
                       />
                     </div>

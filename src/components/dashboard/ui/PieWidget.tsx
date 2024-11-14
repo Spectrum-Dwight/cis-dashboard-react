@@ -42,6 +42,7 @@ function PieWidget({
   }
 
   if (pieChartData) {
+    console.log('pieChartData', pieChartData);
     filteredPieData = pieChartData.filter(
       (account) => selectedAccountId === 0 || account.AccountID === selectedAccountId
     );

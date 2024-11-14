@@ -8,7 +8,6 @@ interface WidgetMixerProps {
   type: string;
   index: number;
   accountDropDownOptions: JSX.Element[];
-  adjusterDropDownOptions: JSX.Element[];
   dataLoading: boolean[];
   dashboardData: {
     accountsKPIData: AccountKPIData[] | undefined;
@@ -24,7 +23,6 @@ function WidgetMixer({
   updateRow,
   dataLoading,
   accountDropDownOptions,
-  adjusterDropDownOptions,
   dashboardData,
 }: WidgetMixerProps) {
   const { accountsKPIData, barChartData, pieChartData } = dashboardData;
@@ -36,7 +34,6 @@ function WidgetMixer({
           removeWidget={updateRow}
           loading={dataLoading[0]}
           accountDropDownOptions={accountDropDownOptions}
-          adjusterDropDownOptions={adjusterDropDownOptions}
           kpiData={accountsKPIData}
         />
       );
