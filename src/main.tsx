@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 
 let appRoot: Root | null = null
 
-export function mountApp(element: HTMLElement) {
+function initializeDashboard(element: HTMLElement) {
   console.log(`Mounting dashboard app in <div> with id: "${element.id}"`)
   appRoot = createRoot(element)
   
@@ -21,7 +21,7 @@ export function mountApp(element: HTMLElement) {
   )
 }
 
-export function unmountApp() {
+function unmountDashboard() {
   if (appRoot) {
     console.log("Unmounting dashboard app")
     appRoot.unmount()

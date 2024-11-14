@@ -25,15 +25,15 @@ function App() {
   let adjusterDropdownOptions: JSX.Element[] = [];
 
   const {
-    accountsKPIData,
-    barChartData,
-    pieChartData,
-    accountError,
-    barChartError,
-    pieChartError,
-    accountsKPILoading,
-    barChartLoading,
-    pieChartLoading,
+    accountsKPIData = [],
+    barChartData = [],
+    pieChartData = [],
+    accountError = "",
+    barChartError = "",
+    pieChartError = "",
+    accountsKPILoading = false,
+    barChartLoading = false,
+    pieChartLoading = false,
   } = useDashboardData();
 
   const findEmptyContentIndices = React.useCallback(
