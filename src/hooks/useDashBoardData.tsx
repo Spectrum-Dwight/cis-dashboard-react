@@ -26,18 +26,18 @@ export type AccountKPIData = {
   TotalIncurred: number;
 };
 
-type PieData = {
+export type PieData = {
   AccountID: number;
-  AdjusterUserID: number;
+  AdjusterName: string;
   AccountName: string;
   TypeOfClaim: string;
   ClaimCount: number;
   TotalIncurred: number;
 };
 
-type BarData = {
+export type BarData = {
   AccountID: number;
-  AdjusterUserID: number;
+  AdjusterName: string;
   AccountName: string;
   ClaimsYear0: number;
   TotalIncurredYear0: number;
@@ -73,19 +73,26 @@ export function createAccountSelectOptions(data: AccountKPIData[]): JSX.Element[
   return selectOptions;
 }
 
-export function createAdjusterSelectOptions(data: AccountKPIData[]): JSX.Element[] {
+export function createAdjusterSelectOptions(
+  data: AccountKPIData[] | BarData[] | PieData[]
+): JSX.Element[] {
   const selectOptions: JSX.Element[] = [];
   const adjusterIDs = new Set<string>();
 
-  data.forEach((account) => {
-    const adjusterID = account.AdjusterUserID.toString();
+  data.forEach((item) => {
+    let adjusterID: string;
+
+    if ('AdjusterUserID' in item && item.AdjusterUserID) {
+      adjusterID = item.AdjusterUserID.toString();
+    } else if ('AdjusterName' in item && item.AdjusterName) {
+      adjusterID = item.AdjusterName.toString();
+    } else {
+      return;
+    }
+
     if (!adjusterIDs.has(adjusterID)) {
       adjusterIDs.add(adjusterID);
-      selectOptions.push(
-        <SelectItem value={account.AdjusterUserID.toString()}>
-          {account.AdjusterUserID.toString()}
-        </SelectItem>
-      );
+      selectOptions.push(<SelectItem value={adjusterID}>{adjusterID}</SelectItem>);
     }
   });
 

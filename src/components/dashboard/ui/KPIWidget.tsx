@@ -28,7 +28,7 @@ function KPIWidget({
   kpiData,
 }: KPIWidgetProps) {
   const [selectedAccountId, setSelectedAccountId] = React.useState<number>(0);
-  const [selectedAdjusterId, setSelectedAdjusterId] = React.useState<string>('0');
+  const [selectedAdjusterId, setSelectedAdjusterId] = React.useState<string>('noval');
   useKpiEventHandlers(selectedAccountId);
 
   let filteredKPIData: any[] = [];
@@ -54,7 +54,7 @@ function KPIWidget({
     filteredKPIData = kpiData.filter(
       (account) =>
         (selectedAccountId === 0 || account.AccountID === selectedAccountId) &&
-        (selectedAdjusterId === '0' || account.AdjusterUserID === selectedAdjusterId)
+        (selectedAdjusterId === 'noval' || account.AdjusterUserID === selectedAdjusterId)
     );
   }
 
@@ -91,7 +91,7 @@ function KPIWidget({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value='0'>All Adjusters</SelectItem>
+              <SelectItem value='noval'>All Adjusters</SelectItem>
               {adjusterDropdownOptions}
             </SelectGroup>
           </SelectContent>

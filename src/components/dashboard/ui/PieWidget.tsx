@@ -11,7 +11,7 @@ import { Loader2, SquareX } from 'lucide-react';
 import 'chart.js/auto';
 import { Pie } from 'react-chartjs-2';
 import React from 'react';
-import { PieDataArray } from '@/hooks/useDashBoardData';
+import { createAdjusterSelectOptions, PieDataArray } from '@/hooks/useDashBoardData';
 import { Chart_Borders, Chart_Colors } from '@/lib/utils';
 
 interface PieWidgetProps {
@@ -30,8 +30,11 @@ function PieWidget({
   pieChartData,
 }: PieWidgetProps) {
   const [selectedAccountId, setSelectedAccountId] = React.useState<number>(0);
-  // const [selectedAdjusterId, setSelectedAdjusterId] = React.useState<string>('');
+  const [selectedAdjusterId, setSelectedAdjusterId] = React.useState<string>('noval');
   let filteredPieData: any[] = [];
+  const adjusterDropdownOptions = React.useMemo(() => {
+    return pieChartData ? createAdjusterSelectOptions(pieChartData) : [];
+  }, [pieChartData]);
 
   if (loading) {
     return (
@@ -44,7 +47,9 @@ function PieWidget({
   if (pieChartData) {
     console.log('pieChartData', pieChartData);
     filteredPieData = pieChartData.filter(
-      (account) => selectedAccountId === 0 || account.AccountID === selectedAccountId
+      (account) =>
+        (selectedAccountId === 0 || account.AccountID === selectedAccountId) &&
+        (selectedAdjusterId === 'noval' || account.AdjusterName === selectedAdjusterId)
     );
   }
 
@@ -70,7 +75,7 @@ function PieWidget({
             </SelectGroup>
           </SelectContent>
         </Select>
-        {/* <Select
+        <Select
           value={selectedAdjusterId}
           onValueChange={(value) => setSelectedAdjusterId(value)}
           disabled={loading}>
@@ -79,11 +84,11 @@ function PieWidget({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value=''>All Adjusters</SelectItem>
-              {adjusterDropDownOptions}
+              <SelectItem value='noval'>All Adjusters</SelectItem>
+              {adjusterDropdownOptions}
             </SelectGroup>
           </SelectContent>
-        </Select> */}
+        </Select>
         <SquareX
           className='w-4 h-4 hover:cursor-pointer'
           onClick={() => {

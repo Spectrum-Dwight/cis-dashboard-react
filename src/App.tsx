@@ -12,10 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import useDashboardData, {
-  createAccountSelectOptions,
-  createAdjusterSelectOptions,
-} from './hooks/useDashBoardData';
+import useDashboardData, { createAccountSelectOptions } from './hooks/useDashBoardData';
 
 function App() {
   const { storedValue, setStoredValue, onDragEnd } = useDragAndDrop();
